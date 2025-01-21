@@ -2,6 +2,7 @@ import { Profile, getProfile } from '@linode/api-v4';
 
 import { configureLinodeApi, defaultApiRoot } from '../util/api';
 import { CypressPlugin } from './plugin';
+import { userInfo } from 'os';
 
 /**
  * Configures API requests to use configure access token and API root.
@@ -30,6 +31,7 @@ export const configureApi: CypressPlugin = async (
 
   // Configure API, attempt to make an API request.
   configureLinodeApi(token, apiBaseUrl);
+  console.log('tokens ', token, apiBaseUrl);
   let profile: Profile | null = null;
   try {
     profile = await getProfile();
@@ -53,8 +55,9 @@ export const configureApi: CypressPlugin = async (
     console.error(
       'Failed to make successful request to Linode API using OAuth token.'
     );
+    console.log('userrr ', userInfo);
     if (e.message) {
-      console.error(e.message);
+      console.error('errorrrr = ', e.message);
     }
     throw new Error('Failed to make request to Linode API-v4.');
   }

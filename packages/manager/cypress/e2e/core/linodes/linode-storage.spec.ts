@@ -208,7 +208,7 @@ describe('linode storage tab', () => {
    * - Confirms that Cloud Manager UI automatically updates to reflect resize.
    */
   it('resize disk', () => {
-    const diskName = 'Debian 12 Disk';
+    const diskName = 'Ubuntu 24.04 Disk';
     cy.defer(() =>
       createTestLinode({ image: null }, { securityMethod: 'powered_off' })
     ).then((linode: Linode) => {
