@@ -27,7 +27,7 @@ const getCommonJunitConfig = (
   testSuite: string,
   config: Cypress.PluginConfigOptions
 ) => {
-  if (config.env[envVarName]) {
+  if (!!config.env[envVarName]) {
     if (!config.reporterOptions) {
       config.reporterOptions = {};
     }
