@@ -111,7 +111,7 @@ export default defineConfig({
         generateTestWeights,
         enableJunitE2eReport,
         enableHtmlReport,
-        configureMultiReporters,
+        // configureMultiReporters,
         postRunCleanup,
       ]);
     },

@@ -32,8 +32,10 @@ const getCommonJunitConfig = (
       config.reporterOptions = {};
     }
     const testSuiteName = `${capitalize(testSuite)} Test Suite`;
-    config.reporterOptions.mochaJunitReporterReporterOptions = {
-      mochaFile: 'cypress/results/test-results-[hash].xml',
+    // config.reporterOptions.mochaJunitReporterReporterOptions = {
+    config.reporter = 'mocha-junit-reporter';
+    config.reporterOptions = {
+      mochaFile: 'cypress/results/test-results.xml',
       rootSuiteTitle: 'Cloud Manager Cypress Tests',
       testsuitesTitle: testSuiteName,
       jenkinsMode: true,
