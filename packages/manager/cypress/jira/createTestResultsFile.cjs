@@ -5,21 +5,24 @@ const inputPath = 'cypress/results';
 const outputPath = 'cypress/results/upload/';
 
 async function loadFiles(dir){
-  const files = await fs.readdir(dir); 
-  // let data = []
-  for (file of files){
-    const filePath = path.join(dir, file);  
-    const xml = await modifyXml(filePath); 
-    writeToFile(xml, file);
+  const files = await fs.readdir(dir);  
+  for (file of files){ 
+	if (file.endsWith('.xml')){
+		const filePath = path.join(dir, file);  
+		const xml = await modifyXml(filePath); 
+		writeToFile(xml, file);
+	}
   } 
+  console.log(`test-results xml files cloned to ${outputPath}/upload`)
 }
 
 async function writeToFile(data, filename) {  
+  fs.mkdir(outputPath, { recursive: true })
   await fs.writeFile(outputPath + filename, data)
 }
 
 async function readKeyMappingsFile(){
-    const filePath = path.join('./', 'mappings.json'); 
+    const filePath = path.join(inputPath, 'mappings.json'); 
     const jsonData = await fs.readFile(filePath, 'utf8'); 
   const objMappings = JSON.parse(jsonData);
   return objMappings;

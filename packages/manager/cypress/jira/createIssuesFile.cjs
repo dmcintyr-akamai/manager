@@ -29,7 +29,7 @@ async function writeToFile(data) {
       tsvRows.push(item);
   });  
 
-	const filePath = path.join(dir, 'jira_test_issues.tsv'); 
+  const filePath = path.join(directoryPath, 'jira_test_issues.tsv'); 
   await fs.writeFile(filePath, tsvRows.join('\n'))
   console.log('done creating file')
 }

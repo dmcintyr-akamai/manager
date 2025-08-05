@@ -7,25 +7,28 @@ const dirOutput = 'cypress/results';
 
 async function createMappingsFile(){
     const responseOutput = await getMostRecentFile();
-    console.log('most recent file = ', responseOutput)
+    console.log('most recent log file = ', responseOutput)
     if (responseOutput){
         const tsv = await fs.readFile(responseOutput, 'utf-8');
         const lines = tsv.split('\n');
         const _ = lines.shift();
         const parsedData = lines.map(line => line.split('\t'));
-        const map = parsedData.reduce((prev, curr) => {
-            console.log('rowdata ', prev, curr)
+        const map = parsedData.reduce((prev, curr) => { 
             if (curr.length >= 3){
                 const jiraKey = curr[0].trim();
                 const cypressKey = curr[2].trim()
+				// add key to obtain jira_key from cypress_key and cypress_key from jira_key
                 prev[cypressKey] = jiraKey
+                prev[jiraKey] = cypressKey
 
             }
             return prev;
         }, {})
         const json = JSON.stringify(map);
-			const filePath = path.join(dirOutput, 'mappings.json'); 
+		const filePath = path.join(dirOutput, 'mappings.json'); 
         await fs.writeFile(filePath, json, 'utf-8')
+
+		console.log('done creating mappings.json file')
     }
 }
 
@@ -47,9 +50,8 @@ async function getMostRecentFile(){
     // Return the name of the most recent file
     if (filesWithStats.length > 0) {
         mostRecentFile = filesWithStats[0].name;
-    }
-    // console.log('mostRecentFile', mostRecentFile)
-    return path.join(dirInput, mostRecentFile);;
+    } 
+    return path.join(dirInput, mostRecentFile);
 }
 
-createMappingsFile();
+createMappingsFile(); 
