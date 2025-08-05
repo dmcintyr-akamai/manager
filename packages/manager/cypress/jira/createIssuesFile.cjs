@@ -1,4 +1,3 @@
-// const fs = require('fs');
 const fs = require('node:fs/promises');
 const path = require('path');
 const { JSDOM } = require("jsdom");
@@ -12,25 +11,27 @@ async function loadFiles(dir){
     const items = await loadXML(filePath);
     data = data.concat(items)
   }
-  console.log('loadfiles data', data)
-  await convertToTsv(data);
+  await writeToFile(data);
 }
 
-async function convertToTsv(data) { 
+async function writeToFile(data) { 
   const headers = ['summary', 'description', 'labels']
   const tsvRows = []; 
   tsvRows.push(headers.join('\t')); 
 
   // Add data rows
   data.forEach(row => {
-      const {title, desc} = row;
-      const summary = `${title}: ${desc}`
-      const values = [summary,desc] 
-      const item = values.join('\t')
-      console.log('item ', item)
+      const {suite, testFilename, testDescription} = row;
+      const issueTitle = `${suite}: ${testDescription}`;
+      const issueDescription = `${testFilename} ${testDescription}`
+      const values = [issueTitle,issueDescription] 
+      const item = values.join('\t') 
       tsvRows.push(item);
   });  
-  await fs.writeFile('jira_test_issues.tsv', tsvRows.join('\n'))
+
+	const filePath = path.join(dir, 'jira_test_issues.tsv'); 
+  await fs.writeFile(filePath, tsvRows.join('\n'))
+  console.log('done creating file')
 }
 
 async function loadXML(filename) {
@@ -40,14 +41,14 @@ async function loadXML(filename) {
         const dom = await JSDOM.fromFile(filename);
         const document = dom.window.document; 
         const testSuites = document.getElementsByTagName('testsuite')
-        const parent = testSuites[0]
-        const testFilename = parent.getAttribute('file');
+        const testSuite = testSuites[0]
+        const testFilename = testSuite.getAttribute('file');
 
         const testcases = document.getElementsByTagName('testcase')
         for (testcase of testcases){  
-          const title = testcase.getAttribute('classname')
-          const desc = testcase.getAttribute('name') 
-          rows.push({title, testFilename, desc}); 
+          const suite = testcase.getAttribute('classname')
+          const testDescription = testcase.getAttribute('name') 
+          rows.push({suite, testFilename, testDescription}); 
         } 
         return rows;
     } catch (error) {
@@ -55,3 +56,6 @@ async function loadXML(filename) {
     }
 } 
 loadFiles(directoryPath) 
+
+// TODO: add tags as labels
+// TODO: buggy when > 1 describe in file. see Object Storage Multicluster Bucket Details Tabs
